@@ -283,15 +283,9 @@ TARGET_DEVICES += cudy_wr2100
 
 define Device/dlink_dir-8xx-a1
   $(Device/dsa-migration)
-  IMAGE_SIZE := 16000k
+  IMAGE_SIZE := 16064k
   DEVICE_VENDOR := D-Link
   DEVICE_PACKAGES := kmod-mt7615e kmod-mt7615-firmware
-  KERNEL_INITRAMFS := $$(KERNEL) | uimage-padhdr 96
-  IMAGES += factory.bin
-  IMAGE/sysupgrade.bin := append-kernel | append-rootfs | uimage-padhdr 96 |\
-	pad-rootfs | check-size | append-metadata
-  IMAGE/factory.bin := append-kernel | append-rootfs | uimage-padhdr 96 |\
-	check-size
 endef
 
 define Device/dlink_dir-8xx-r1
@@ -409,13 +403,13 @@ endef
 TARGET_DEVICES += dlink_dir-882-r1
 
 define Device/d-team_newifi-d2
-  $(Device/dsa-migration)
   $(Device/uimage-lzma-loader)
   IMAGE_SIZE := 32448k
   DEVICE_VENDOR := Newifi
   DEVICE_MODEL := D2
-  DEVICE_PACKAGES := kmod-mt7603 kmod-mt76x2 kmod-usb3 \
-	kmod-usb-ledtrig-usbport
+  DEVICE_COMPAT_VERSION := 1.1
+  DEVICE_PACKAGES := kmod-mt7603e kmod-mt76x2e kmod-usb3 \
+	kmod-usb-ledtrig-usbport luci-app-mtwifi -wpad-openssl
 endef
 TARGET_DEVICES += d-team_newifi-d2
 
@@ -589,12 +583,11 @@ endef
 TARGET_DEVICES += firefly_firewrt
 
 define Device/gehua_ghl-r-001
-  $(Device/dsa-migration)
   IMAGE_SIZE := 32448k
   DEVICE_VENDOR := GeHua
   DEVICE_MODEL := GHL-R-001
-  DEVICE_PACKAGES := kmod-mt7603 kmod-mt76x2 kmod-usb3 \
-	kmod-usb-ledtrig-usbport
+  DEVICE_PACKAGES := kmod-mt7603e kmod-mt76x2e kmod-usb3 \
+	kmod-usb-ledtrig-usbport luci-app-mtwifi -wpad-openssl
 endef
 TARGET_DEVICES += gehua_ghl-r-001
 
@@ -603,7 +596,7 @@ define Device/glinet_gl-mt1300
   IMAGE_SIZE := 32448k
   DEVICE_VENDOR := GL.iNet
   DEVICE_MODEL := GL-MT1300
-  DEVICE_PACKAGES := kmod-mt7615e kmod-mt7615-firmware kmod-usb3
+  DEVICE_PACKAGES := kmod-mt7615d_dbdc kmod-usb3 -luci-newapi -wpad-openssl
 endef
 TARGET_DEVICES += glinet_gl-mt1300
 
@@ -792,7 +785,7 @@ define Device/jcg_y2
   JCG_MAXSIZE := 16064k
   DEVICE_VENDOR := JCG
   DEVICE_MODEL := Y2
-  DEVICE_PACKAGES := kmod-mt7615e kmod-mt7615-firmware kmod-usb3
+  DEVICE_PACKAGES := kmod-mt7615d_dbdc kmod-usb3 -luci-newapi -wpad-openssl
 endef
 TARGET_DEVICES += jcg_y2
 
@@ -1026,7 +1019,6 @@ define Device/netgear_r6220
 endef
 TARGET_DEVICES += netgear_r6220
 
-
 define Device/netgear_r6260
   $(Device/netgear_sercomm_nand)
   DEVICE_MODEL := R6260
@@ -1157,12 +1149,12 @@ endef
 TARGET_DEVICES += netis_wf2881
 
 define Device/phicomm_k2p
-  $(Device/dsa-migration)
   IMAGE_SIZE := 15744k
   DEVICE_VENDOR := Phicomm
   DEVICE_MODEL := K2P
   SUPPORTED_DEVICES += k2p
-  DEVICE_PACKAGES := -luci-newapi -wpad-openssl kmod-mt7615d_dbdc luci-app-adbyby-plus xray-core UnblockNeteaseMusicGo
+  DEVICE_COMPAT_VERSION := 1.1
+  DEVICE_PACKAGES := -luci-newapi -wpad-openssl kmod-mt7615d_dbdc wireless-tools
 endef
 TARGET_DEVICES += phicomm_k2p
 
@@ -1484,7 +1476,6 @@ endef
 TARGET_DEVICES += winstars_ws-wn583a6
 
 define Device/xiaomi_nand_separate
-  $(Device/dsa-migration)
   $(Device/uimage-lzma-loader)
   DEVICE_VENDOR := Xiaomi
   DEVICE_PACKAGES := uboot-envtools
@@ -1499,6 +1490,7 @@ define Device/xiaomi_nand_separate
 endef
 
 define Device/xiaomi_mi-router-3g
+  $(Device/dsa-migration)
   $(Device/xiaomi_nand_separate)
   DEVICE_MODEL := Mi Router 3G
   IMAGE_SIZE := 124416k
@@ -1541,6 +1533,7 @@ endef
 TARGET_DEVICES += xiaomi_mi-router-3-pro
 
 define Device/xiaomi_mi-router-4
+  $(Device/dsa-migration)
   $(Device/xiaomi_nand_separate)
   DEVICE_MODEL := Mi Router 4
   IMAGE_SIZE := 124416k
@@ -1563,11 +1556,13 @@ define Device/xiaomi_mi-router-ac2100
   $(Device/xiaomi_nand_separate)
   DEVICE_MODEL := Mi Router AC2100
   IMAGE_SIZE := 120320k
-  DEVICE_PACKAGES += kmod-mt7603 kmod-mt7615e kmod-mt7615-firmware
+  DEVICE_COMPAT_VERSION := 1.1
+  DEVICE_PACKAGES += kmod-mt7603e kmod-mt7615d luci-app-mtwifi \
+	-wpad-openssl
 endef
 TARGET_DEVICES += xiaomi_mi-router-ac2100
 
-define Device/xiaomi_mi-router-cr6606
+define Device/xiaomi_mi-router-cr660x
   $(Device/uimage-lzma-loader)
   BLOCKSIZE := 128k
   PAGESIZE := 2048
@@ -1576,26 +1571,31 @@ define Device/xiaomi_mi-router-cr6606
   IMAGE_SIZE := 128512k
   IMAGES += factory.bin
   IMAGE/sysupgrade.bin := sysupgrade-tar | append-metadata
-  IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-ubi | check-size
+  IMAGE/factory.bin := append-kernel | pad-to $$(KERNEL_SIZE) | append-ubi | \
+	check-size
   DEVICE_VENDOR := Xiaomi
-  DEVICE_MODEL := Mi Router CR6606/CR6608/CR6609
+  DEVICE_MODEL := Mi Router CR660x
   DEVICE_PACKAGES += kmod-mt7915e wpad-openssl uboot-envtools
+  SUPPORTED_DEVICES += xiaomi,mi-router-cr6606
+  DEVICE_COMPAT_VERSION := 1.1
 endef
-TARGET_DEVICES += xiaomi_mi-router-cr6606
+TARGET_DEVICES += xiaomi_mi-router-cr660x
 
 define Device/xiaomi_redmi-router-ac2100
   $(Device/xiaomi_nand_separate)
   DEVICE_MODEL := Redmi Router AC2100
   IMAGE_SIZE := 120320k
-  DEVICE_PACKAGES += kmod-mt7603 kmod-mt7615e kmod-mt7615-firmware
+  DEVICE_COMPAT_VERSION := 1.1
+  DEVICE_PACKAGES += kmod-mt7603e kmod-mt7615d luci-app-mtwifi \
+	-wpad-openssl
 endef
 TARGET_DEVICES += xiaomi_redmi-router-ac2100
 
 define Device/xiaoyu_xy-c5
-  $(Device/dsa-migration)
   IMAGE_SIZE := 32448k
   DEVICE_VENDOR := XiaoYu
   DEVICE_MODEL := XY-C5
+  DEVICE_COMPAT_VERSION := 1.1
   DEVICE_PACKAGES := kmod-ata-ahci kmod-usb3 -wpad-openssl
 endef
 TARGET_DEVICES += xiaoyu_xy-c5
