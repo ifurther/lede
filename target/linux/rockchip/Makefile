@@ -10,7 +10,6 @@ SUBTARGETS:=armv8
 KERNEL_PATCHVER=5.15
 KERNEL_TESTING_PATCHVER=6.0
 
-
 define Target/Description
 	Build firmware image for Rockchip SoC devices.
 endef
