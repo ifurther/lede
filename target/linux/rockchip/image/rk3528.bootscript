@@ -1,8 +1,16 @@
 part uuid mmc ${devnum}:2 uuid
 
+<<<<<<< HEAD
 setenv bootargs "console=ttyS0,1500000 earlycon=uart8250,mmio32,0xff9f0000 root=PARTUUID=${uuid} rw rootwait"
+=======
+setenv bootargs "earlycon=uart8250,mmio32,0xff9f0000 console=ttyFIQ0 root=PARTUUID=${uuid} rw rootwait"
+>>>>>>> 0c8bcd9ec (rockchip: add ArmSom RK3528 Sige1 Board support)
 
 load mmc ${devnum}:1 ${fdt_addr_r} rockchip.dtb
 load mmc ${devnum}:1 ${kernel_addr_r} kernel.img
 
+<<<<<<< HEAD
 booti ${kernel_addr_r} - ${fdt_addr_r}
+=======
+booti ${kernel_addr_r} - ${fdt_addr_r}
+>>>>>>> 0c8bcd9ec (rockchip: add ArmSom RK3528 Sige1 Board support)
