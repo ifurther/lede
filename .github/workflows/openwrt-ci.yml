@@ -5,7 +5,7 @@
 #
 # Copyright (C) 2020 KFERMercer
 #
-name: OpenWrt-CI
+name: OpenWrt-CI for Newifi-D1
 
 on:
   schedule:
@@ -72,6 +72,14 @@ jobs:
           rm -rf $(find ./bin/targets/ -type d -name "packages")
           cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
+
+      - name: Cache
+        uses: actions/cache@v4.2.0
+        with:
+          path: |
+            .ccache
+            staging_dir/[tool,host]*
+          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
 
       - name: Upload buildinfo
         uses: actions/upload-artifact@v4
