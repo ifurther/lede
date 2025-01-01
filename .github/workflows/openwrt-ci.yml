@@ -44,6 +44,16 @@ jobs:
       - name: Checkout OpenWrt
         uses: actions/checkout@v4
 
+      - name: Restore cached
+        id: cache-lede-restore
+        uses: actions/cache/restore@v4.2.0
+        with:
+          path: |
+            .ccache
+            dl
+            staging_dir/[tool,host]*
+          key: ${{ runner.os }}-lede
+
       - name: Update feeds
         run: |
           sed -i 's/#src-git helloworld/src-git helloworld/g' ./feeds.conf.default
@@ -76,13 +86,14 @@ jobs:
           cp -rf $(find ./bin/packages/ -type f -name "*.ipk") ./artifact/package/
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
 
-      - name: Cache
+      - name: Cache Saved
         uses: actions/cache@v4.2.0
         with:
           path: |
             .ccache
+            dl
             staging_dir/[tool,host]*
-          key: ${{ runner.os }}-${{ hashFiles('**/lockfiles') }}
+          key: ${{ steps.cache-lede-restore.outputs.cache-lede-key }}
 
       - name: Upload buildinfo
         uses: actions/upload-artifact@v4
