@@ -9,7 +9,8 @@ name: OpenWrt-CI for Newifi-D1
 
 on:
   push:
-    - branches: [ "newifi" ]
+    branches:
+      － newifi
   schedule:
     - cron: 0 20 * * *
 
