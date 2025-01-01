@@ -20,7 +20,7 @@ jobs:
 
     name: Build OpenWrt Firmware
 
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Space cleanup and Initialization environment
@@ -51,7 +51,7 @@ jobs:
         run: make defconfig
 
       - name: Download packages
-        run: make download -j16
+        run: make download -j$(nproc)
 
       - name: Compile firmware
         run: |
@@ -74,19 +74,19 @@ jobs:
           cp -rf $(find ./bin/targets/ -type f -name "*.buildinfo" -o -name "*.manifest") ./artifact/buildinfo/
 
       - name: Upload buildinfo
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenWrt_buildinfo
           path: ./artifact/buildinfo/
 
       - name: Upload package
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenWrt_package
           path: ./artifact/package/
 
       - name: Upload firmware
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: OpenWrt_firmware
           path: ./bin/targets/
